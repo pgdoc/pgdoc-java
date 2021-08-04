@@ -23,12 +23,12 @@ public class Document {
      * Gets the current version of the document.
      */
     @Getter
-    private final ByteString version;
+    private final long version;
 
     public Document(
-            @NonNull UUID id,
-            String body,
-            @NonNull ByteString version)
+        @NonNull UUID id,
+        String body,
+        long version)
     {
         this.id = id;
         this.body = body;

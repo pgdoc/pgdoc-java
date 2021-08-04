@@ -7,14 +7,15 @@ import java.util.Arrays;
 public class ByteString {
     private final byte[] data;
 
-    public static final ByteString Empty = new ByteString(new byte[0]);
+    public static final ByteString EMPTY = new ByteString(new byte[0]);
 
     public ByteString(@NonNull final byte[] data) {
         // Make a copy to avoid outside changes
         this.data = Arrays.copyOf(data, data.length);
     }
 
-    public static ByteString parse(@NonNull String hexValue) {
+    public static ByteString parse(@NonNull String hexValue)
+    {
         if (hexValue.length() % 2 == 1)
             throw new NumberFormatException("The hexValue parameter must have an even number of digits.");
 
@@ -28,8 +29,9 @@ public class ByteString {
         return new ByteString(result);
     }
 
-    private static int getHexValue(char hex) {
-        int value = (int) hex;
+    private static int getHexValue(char hex)
+    {
+        int value = (int)hex;
         if (value >= '0' && value <= '9')
             return value - '0';
         else if (value >= 'a' && value <= 'f')
@@ -45,7 +47,8 @@ public class ByteString {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         final String hexValues = "0123456789abcdef";
 
         StringBuilder hex = new StringBuilder(data.length << 1);

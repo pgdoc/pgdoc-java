@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 import java.security.SecureRandom;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Struct;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,48 +15,28 @@ public class DocumentStore {
     @NonNull
     private final Connection connection;
 
-    public ByteString updateDocuments(
+    public void updateDocuments(
         Iterable<Document> updatedDocuments,
         Iterable<Document> checkedDocuments)
         throws SQLException {
 
-        CallableStatement statement = this.connection.prepareCall("{?= call update_documents(?, ?)}");
+        PreparedStatement statement = this.connection.prepareCall("{call update_documents(?)}");
 
-        List<Struct> documentUpdates = new ArrayList<Struct>();
+        List<DocumentUpdate> documentUpdates = new ArrayList<>();
 
-        for (Document document : updatedDocuments) {
+        for (Document document: updatedDocuments) {
             documentUpdates.add(
-                connection.createStruct(
-                    "document_update",
-                    new Object[]{document.getId(),
-                        document.getBody(),
-                        document.getVersion().array(),
-                        false
-                    }));
+                new DocumentUpdate(document.getId(), document.getBody(), document.getVersion(), false));
         }
 
-        for (Document document : checkedDocuments) {
+        for (Document document: checkedDocuments) {
             documentUpdates.add(
-                connection.createStruct(
-                    "document_update",
-                    new Object[]{
-                        document.getId(),
-                        null,
-                        document.getVersion().array(),
-                        true
-                    }));
+                new DocumentUpdate(document.getId(), null, document.getVersion(), true));
         }
 
-        // Generate a random new version
-        SecureRandom random = new SecureRandom();
-        byte[] newVersion = new byte[16];
-        random.nextBytes(newVersion);
+        Array array = connection.createArrayOf("document_update", documentUpdates.toArray(new DocumentUpdate[0]));
+        statement.setObject(1, array);
 
-        statement.setArray(0, connection.createArrayOf("document_updates", documentUpdates.toArray()));
-        statement.setBytes(1, newVersion);
-
-        statement.execute();
-
-        return new ByteString(newVersion);
+        statement.executeUpdate();
     }
 }
