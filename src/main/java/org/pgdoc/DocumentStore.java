@@ -1,42 +1,31 @@
 package org.pgdoc;
 
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
-import java.security.SecureRandom;
-import java.sql.*;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-@AllArgsConstructor
-public class DocumentStore {
+public interface DocumentStore {
 
-    @NonNull
-    private final Connection connection;
-
-    public void updateDocuments(
+    void updateDocuments(
         Iterable<Document> updatedDocuments,
         Iterable<Document> checkedDocuments)
-        throws SQLException {
+        throws DocumentStoreException, UpdateConflictException;
 
-        PreparedStatement statement = this.connection.prepareCall("{call update_documents(?)}");
+    List<Document> getDocuments(
+        Iterable<UUID> ids)
+        throws DocumentStoreException;
 
-        List<DocumentUpdate> documentUpdates = new ArrayList<>();
+    default void updateDocuments(Document... documents) {
+        this.updateDocuments(Arrays.asList(documents), List.of());
+    }
 
-        for (Document document: updatedDocuments) {
-            documentUpdates.add(
-                new DocumentUpdate(document.getId(), document.getBody(), document.getVersion(), false));
-        }
+    default void updateDocument(@NonNull UUID id, String body, long version) {
+        this.updateDocuments(new Document(id, body, version));
+    }
 
-        for (Document document: checkedDocuments) {
-            documentUpdates.add(
-                new DocumentUpdate(document.getId(), null, document.getVersion(), true));
-        }
-
-        Array array = connection.createArrayOf("document_update", documentUpdates.toArray(new DocumentUpdate[0]));
-        statement.setObject(1, array);
-
-        statement.executeUpdate();
+    default Document getDocument(@NonNull UUID id) {
+        return this.getDocuments(List.of(id)).get(0);
     }
 }
