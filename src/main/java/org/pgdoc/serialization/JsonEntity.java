@@ -48,7 +48,10 @@ public class JsonEntity<T> {
         return new JsonEntity<T>(getId(), newValue, getVersion());
     }
 
-    public static <T> JsonEntity<T> create(T value, EntityId type) {
-        return new JsonEntity<>(type, value, 0);
+    public static <T> JsonEntity<T> create(T value) {
+        return new JsonEntity<T>(
+            EntityId.newRandom(EntityId.getEntityType(value.getClass())),
+            value,
+            0);
     }
 }
