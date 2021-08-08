@@ -2,6 +2,7 @@ package org.pgdoc;
 
 import com.impossibl.postgres.jdbc.PGSQLSimpleException;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 
 import java.sql.*;
@@ -14,6 +15,7 @@ public class SQLDocumentStore implements DocumentStore {
     private static final String deadlockDetectedSqlState = "40P01";
 
     @NonNull
+    @Getter
     private final Connection connection;
 
     @Override
