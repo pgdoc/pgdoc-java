@@ -1,6 +1,7 @@
 package org.pgdoc;
 
 import com.impossibl.postgres.jdbc.PGSQLSimpleException;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -15,7 +16,7 @@ public class SQLDocumentStore implements DocumentStore {
     private static final String deadlockDetectedSqlState = "40P01";
 
     @NonNull
-    @Getter
+    @Getter(value = AccessLevel.PROTECTED)
     private final Connection connection;
 
     @Override
