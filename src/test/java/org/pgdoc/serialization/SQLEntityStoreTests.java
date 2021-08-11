@@ -23,10 +23,9 @@ public class SQLEntityStoreTests {
 
     @BeforeEach
     void setup() throws SQLException {
-        String connectionString = "jdbc:pgsql://localhost:5432/pgdoc";
+        String connectionString = System.getProperty("db_connection_url");
         Properties props = new Properties();
-        props.setProperty("user", "pgdoc");
-        props.setProperty("password", "");
+        props.setProperty("password", System.getProperty("db_connection_password"));
 
         Connection connection = DriverManager.getConnection(connectionString, props);
         this.store = new SQLEntityStore(connection);
