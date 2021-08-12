@@ -9,6 +9,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.pgdoc.Document;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +21,8 @@ public class JsonEntityTests {
 
     private static final UUID guid = UUID.fromString("f81428a9-0bd9-4d75-95bf-976225f24cf1");
     private static final long version = 10;
+    private static final LocalDateTime date =
+        LocalDateTime.of(2009, 1, 3, 20, 30, 0);
 
     @Test
     public void fromDocument_success() {
@@ -26,6 +31,8 @@ public class JsonEntityTests {
         testObject.setStringValue("value");
         testObject.setInt64Value(12345);
         testObject.setBoolValue(true);
+        testObject.setDateValue(date);
+        testObject.setInstantValue(date.toInstant(ZoneOffset.UTC));
 
         JsonEntity<TestJsonEntity> entity = new JsonEntity<>(new EntityId(guid), testObject, version);
 
@@ -34,13 +41,15 @@ public class JsonEntityTests {
 
         assertEquals(guid, document.getId());
         assertEquals(version, document.getVersion());
-        assertEquals("{\"string_value\":\"value\",\"int64_value\":12345,\"bool_value\":true}", document.getBody());
+        assertEquals("{\"string_value\":\"value\",\"int64_value\":12345,\"bool_value\":true,\"date_value\":\"2009-01-03T20:30:00\",\"instant_value\":\"2009-01-03T20:30:00Z\"}", document.getBody());
 
         assertEquals(guid, result.getId().getValue());
         assertEquals(version, result.getVersion());
         assertEquals("value", result.getEntity().getStringValue());
         assertEquals(12345, result.getEntity().getInt64Value());
         assertEquals(true, result.getEntity().isBoolValue());
+        assertEquals(date, result.getEntity().getDateValue());
+        assertEquals(date.toInstant(ZoneOffset.UTC), result.getEntity().getInstantValue());
     }
 
     @Test
@@ -79,6 +88,8 @@ public class JsonEntityTests {
         assertEquals(null, result.getEntity().getStringValue());
         assertEquals(0, result.getEntity().getInt64Value());
         assertEquals(false, result.getEntity().isBoolValue());
+        assertEquals(null, result.getEntity().getDateValue());
+        assertEquals(null, result.getEntity().getInstantValue());
     }
 
     @ParameterizedTest
@@ -144,5 +155,15 @@ public class JsonEntityTests {
         @Setter
         @SerializedName(value = "bool_value")
         private boolean boolValue;
+
+        @Getter
+        @Setter
+        @SerializedName(value = "date_value")
+        private LocalDateTime dateValue;
+
+        @Getter
+        @Setter
+        @SerializedName(value = "instant_value")
+        private Instant instantValue;
     }
 }

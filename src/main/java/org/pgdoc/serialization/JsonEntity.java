@@ -1,13 +1,21 @@
 package org.pgdoc.serialization;
 
+import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.NonNull;
 import org.pgdoc.Document;
 
 public class JsonEntity<T> {
 
-    private static final Gson gson = new Gson();
+    private static final Gson gson;
+
+    static {
+        GsonBuilder builder = new GsonBuilder();
+        Converters.registerAll(builder);
+        gson = builder.create();
+    }
 
     public JsonEntity(@NonNull EntityId id, T entity, long version) {
         this.id = id;
