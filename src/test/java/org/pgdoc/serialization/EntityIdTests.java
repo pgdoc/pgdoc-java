@@ -52,16 +52,14 @@ public class EntityIdTests {
     }
 
     @Test
-    public void toString_success()
-    {
+    public void toString_success() {
         EntityId value = EntityId.parse(guid);
 
         assertEquals(guid, value.toString());
     }
 
     @Test
-    public void equals_success()
-    {
+    public void equals_success() {
         EntityId value1 = EntityId.newRandom(1);
         EntityId value2 = EntityId.newRandom(1);
         EntityId value3 = new EntityId(
@@ -77,8 +75,7 @@ public class EntityIdTests {
     }
 
     @Test
-    public void hashCode_success()
-    {
+    public void hashCode_success() {
         EntityId value1 = EntityId.newRandom(1);
         EntityId value2 = EntityId.newRandom(1);
         EntityId value3 = new EntityId(

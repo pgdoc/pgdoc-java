@@ -20,7 +20,9 @@ import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.*;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -75,7 +77,7 @@ public class SQLDocumentStoreTests {
             DocumentStoreException.class,
             () -> updateDocument("{\"abc\":}", 0));
 
-        assertEquals("22P02", ((SQLException)exception.getCause()).getSQLState());
+        assertEquals("22P02", ((SQLException) exception.getCause()).getSQLState());
     }
 
     @ParameterizedTest

@@ -109,7 +109,7 @@ public class JsonEntityTests {
     }
 
     @ParameterizedTest
-    @ValueSource(longs = {Long.MIN_VALUE, Long.MAX_VALUE, 0, 1, -1 })
+    @ValueSource(longs = {Long.MIN_VALUE, Long.MAX_VALUE, 0, 1, -1})
     public void fromDocument_serializeInt64(long value) {
 
         TestJsonEntity testObject = new TestJsonEntity();

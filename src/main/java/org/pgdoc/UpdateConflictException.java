@@ -31,8 +31,7 @@ public class UpdateConflictException extends RuntimeException {
     @Getter
     private final long version;
 
-    public UpdateConflictException(UUID id, long version)
-    {
+    public UpdateConflictException(UUID id, long version) {
         super(String.format("The object '%s' has been modified.", id));
         this.id = id;
         this.version = version;

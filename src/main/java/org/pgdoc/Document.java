@@ -41,11 +41,7 @@ public class Document {
     @Getter
     private final long version;
 
-    public Document(
-        @NonNull UUID id,
-        String body,
-        long version)
-    {
+    public Document(@NonNull UUID id, String body, long version) {
         this.id = id;
         this.body = body;
         this.version = version;

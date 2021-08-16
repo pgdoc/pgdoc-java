@@ -26,6 +26,7 @@ public interface DocumentStore {
 
     /**
      * Updates atomically the body of several objects.
+     *
      * @param updatedDocuments The documents being updated.
      * @param checkedDocuments The documents of which the versions are checked, but which are not updated.
      */
@@ -36,6 +37,7 @@ public interface DocumentStore {
 
     /**
      * Gets a list of documents given their IDs.
+     *
      * @param ids The IDs of the documents to retrieve.
      * @return The list of documents whose IDs were provided.
      */

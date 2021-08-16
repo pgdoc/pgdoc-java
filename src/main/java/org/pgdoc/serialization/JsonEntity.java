@@ -33,12 +33,6 @@ public class JsonEntity<T> {
         gson = builder.create();
     }
 
-    public JsonEntity(@NonNull EntityId id, T entity, long version) {
-        this.id = id;
-        this.entity = entity;
-        this.version = version;
-    }
-
     @Getter
     private final EntityId id;
 
@@ -47,6 +41,12 @@ public class JsonEntity<T> {
 
     @Getter
     private final long version;
+
+    public JsonEntity(@NonNull EntityId id, T entity, long version) {
+        this.id = id;
+        this.entity = entity;
+        this.version = version;
+    }
 
     public static <T> JsonEntity<T> fromDocument(Class<T> type, Document document) {
 

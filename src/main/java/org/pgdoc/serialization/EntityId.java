@@ -33,7 +33,7 @@ public class EntityId {
 
     public EntityId(@NonNull UUID id) {
         this.value = id;
-        this.type = (int)(id.getMostSignificantBits() >> 32);
+        this.type = (int) (id.getMostSignificantBits() >> 32);
     }
 
     public static EntityId newRandom(int type) {
@@ -67,9 +67,8 @@ public class EntityId {
     public boolean equals(Object other) {
         if (!(other instanceof EntityId)) {
             return false;
-        }
-        else {
-            return this.value.equals(((EntityId)other).value);
+        } else {
+            return this.value.equals(((EntityId) other).value);
         }
     }
 
