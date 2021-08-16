@@ -36,6 +36,89 @@ public class Document {
 }
 ```
 
+## Initialization
+
+Start by creating an instance of the `SQLDocumentStore` class.
+
+```java
+Connection connection = DriverManager.getConnection(connectionString, props);
+DocumentStore documentStore = new SQLDocumentStore(connection);
+```
+
+## Retrieving a document
+
+Use the `getDocuments` method (or `getDocument`) to retrieve one or more documents by ID.
+
+```java
+Document document = documentStore.getDocument(documentId);
+```
+
+Attempting to retrieve a document that doesn't exist will return a `Document` object with a `body` set to null. This can be either because the document has not been created yet, or because it has been deleted.
+
+## Updating
+
+Updating a document is done in three steps:
+
+1. Retrieve the current document.
+2. Update the document in the application.
+3. Call `updateDocuments` to store the updated document in the database.
+
+PgDoc relies on optimistic concurrency to guarantee consistency. When a document is updated, the version of the document being updated must be supplied. If it doesn't match the current version of the document, the update will fail and an `UpdateConflictException` will be thrown.
+
+After a successful update, the `version` of all the updated documents is incremented by one. 
+
+```java
+// Retrieve the document to update
+Document document = documentStore.getDocument(documentId);
+
+// Create the new version of the document with an updated body
+Document updatedDocument = new Document(
+    document.Id,
+    "{'key':'updated_value'}",
+    document.Version
+);
+
+documentStore.updateDocuments(updatedDocument);
+```
+
+It is also possible to atomically update several documents at once by passing multiple documents to `updateDocuments`. If any of the documents fails the version check, none of the documents will be updated.
+
+## Deleting and creating documents
+
+PgDoc has no concept of inserting or deleting. They are both treated as an update.
+
+Creating a new document is equivalent to updating a document from a null `body` to a non-null `body`. The initial `version` of a document that has never been created is always zero.
+
+```java
+// Generate a random ID for the new document
+UUID documentId = UUID.randomUUID();
+
+// Create the new document
+Document newDocument = new Document(
+    documentId,
+    "{'key':'inital_value'}",
+    0
+);
+
+documentStore.updateDocuments(updatedDocument);
+```
+
+Deleting a document is equivalent to updating a document from a non-null `body` to a null `body`.
+
+```java
+// Retrieve the document to delete
+Document document = documentStore.getDocument(documentId);
+
+// Create the new version of the document with a null body
+Document deletedDocument = new Document(
+    document.Id,
+    null,
+    document.Version
+);
+
+documentStore.updateDocuments(deletedDocument);
+```
+
 ## License
 
 Copyright 2016 Flavien Charlon
