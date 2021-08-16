@@ -63,6 +63,22 @@ public class EntityId {
         return annotation.typeId();
     }
 
+    public EntityId withType(int type) {
+        byte[] bytes = new byte[16];
+
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        bb.putLong(this.value.getMostSignificantBits());
+        bb.putLong(this.value.getLeastSignificantBits());
+        bb.position(0);
+        bb.putInt(type);
+        bb.position(0);
+
+        long high = bb.getLong();
+        long low = bb.getLong();
+
+        return new EntityId(new UUID(high, low));
+    }
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof EntityId)) {

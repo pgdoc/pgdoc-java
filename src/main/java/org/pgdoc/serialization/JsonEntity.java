@@ -21,10 +21,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import org.pgdoc.Document;
 
 public class JsonEntity<T> {
 
+    @Setter
     private static final Gson gson;
 
     static {

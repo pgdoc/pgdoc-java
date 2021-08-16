@@ -16,6 +16,7 @@
 
 package org.pgdoc.serialization;
 
+import lombok.Cleanup;
 import org.pgdoc.Document;
 import org.pgdoc.DocumentStoreException;
 import org.pgdoc.SQLDocumentStore;
@@ -47,7 +48,7 @@ public class SQLEntityStore extends SQLDocumentStore {
 
     public <T> List<JsonEntity<T>> getAllEntitiesOfType(Class<T> type) {
         try {
-            PreparedStatement statement = this.getConnection().prepareStatement(
+            @Cleanup PreparedStatement statement = this.getConnection().prepareStatement(
                 "SELECT id, body, version FROM document WHERE get_document_type(id) = (?)");
 
             statement.setInt(1, EntityId.getEntityType(type));
@@ -65,7 +66,7 @@ public class SQLEntityStore extends SQLDocumentStore {
     }
 
     protected <T> List<JsonEntity<T>> executeDocumentQuery(Class<T> type, PreparedStatement statement) throws SQLException {
-        ResultSet resultSet = statement.executeQuery();
+        @Cleanup ResultSet resultSet = statement.executeQuery();
 
         ArrayList<JsonEntity<T>> result = new ArrayList<>();
 

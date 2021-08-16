@@ -19,6 +19,7 @@ package org.pgdoc;
 import com.impossibl.postgres.jdbc.PGSQLSimpleException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Cleanup;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -26,7 +27,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @AllArgsConstructor
 public class SQLDocumentStore implements DocumentStore {
@@ -56,7 +62,7 @@ public class SQLDocumentStore implements DocumentStore {
         }
 
         try {
-            PreparedStatement statement = this.connection.prepareCall("{call update_documents(?)}");
+            @Cleanup PreparedStatement statement = this.connection.prepareCall("{call update_documents(?)}");
 
             statement.setObject(
                 1,
@@ -100,11 +106,11 @@ public class SQLDocumentStore implements DocumentStore {
         Map<UUID, Document> resultMap = new HashMap<>();
         try {
 
-            PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM get_documents(?)");
+            @Cleanup PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM get_documents(?)");
 
             statement.setObject(1, connection.createArrayOf("uuid", idList.toArray(new UUID[0])));
 
-            ResultSet resultSet = statement.executeQuery();
+            @Cleanup ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
                 UUID id = resultSet.getObject("id", java.util.UUID.class);

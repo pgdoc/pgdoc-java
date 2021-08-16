@@ -22,7 +22,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EntityIdTests {
 
@@ -49,6 +52,14 @@ public class EntityIdTests {
         EntityId entityId2 = EntityId.newRandom(1);
 
         assertNotEquals(entityId1.getValue(), entityId2.getValue());
+    }
+
+    @Test
+    public void withType_success() {
+        EntityId entityId1 = EntityId.parse(guid);
+        EntityId entityId2 = entityId1.withType(0x123456ab);
+
+        assertEquals("123456ab-fda9-11e8-b568-0800200c9a66", entityId2.getValue().toString());
     }
 
     @Test
