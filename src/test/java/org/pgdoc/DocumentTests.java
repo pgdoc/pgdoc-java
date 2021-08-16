@@ -30,7 +30,6 @@ public class DocumentTests {
 
     @Test
     public void new_success() {
-
         Document document1 = new Document(UUID.fromString(uuid), "{'abc':'def'}", 2);
         Document document2 = new Document(UUID.fromString(uuid), null, 2);
 
@@ -44,7 +43,6 @@ public class DocumentTests {
 
     @Test
     public void new_nullId() {
-
         assertThrows(
             NullPointerException.class,
             () -> new Document(null, "{'abc':'def'}", 2));

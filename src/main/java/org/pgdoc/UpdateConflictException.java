@@ -21,9 +21,9 @@ import lombok.Getter;
 import java.util.UUID;
 
 /**
- * Represents an error caused by the attempt of modifying a record using the wrong base version.
+ * Represents an error caused by an attempt to modify a record using the wrong base version.
  */
-public class UpdateConflictException extends RuntimeException {
+public class UpdateConflictException extends Exception {
 
     @Getter
     private final UUID id;

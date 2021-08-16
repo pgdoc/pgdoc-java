@@ -58,9 +58,14 @@ public class EntityId {
     }
 
     public static int getEntityType(@NonNull Class<?> type) {
-
         JsonEntityType annotation = type.getAnnotation(JsonEntityType.class);
-        return annotation.typeId();
+
+        if (annotation == null) {
+            throw new IllegalArgumentException(
+                String.format("The type %s does not have a JsonEntityType annotation.", type.getName()));
+        } else {
+            return annotation.typeId();
+        }
     }
 
     public EntityId withType(int type) {

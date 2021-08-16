@@ -38,11 +38,11 @@ public class Document {
 
 ## Initialization
 
-Start by creating an instance of the `SQLDocumentStore` class.
+Start by creating an instance of the `SqlDocumentStore` class.
 
 ```java
 Connection connection = DriverManager.getConnection(connectionString, props);
-DocumentStore documentStore = new SQLDocumentStore(connection);
+DocumentStore documentStore = new SqlDocumentStore(connection);
 ```
 
 ## Retrieving a document

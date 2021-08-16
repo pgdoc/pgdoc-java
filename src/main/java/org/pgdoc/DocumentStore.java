@@ -30,9 +30,7 @@ public interface DocumentStore {
      * @param updatedDocuments The documents being updated.
      * @param checkedDocuments The documents of which the versions are checked, but which are not updated.
      */
-    void updateDocuments(
-        Iterable<Document> updatedDocuments,
-        Iterable<Document> checkedDocuments)
+    void updateDocuments(Iterable<Document> updatedDocuments, Iterable<Document> checkedDocuments)
         throws DocumentStoreException, UpdateConflictException;
 
     /**
@@ -41,19 +39,24 @@ public interface DocumentStore {
      * @param ids The IDs of the documents to retrieve.
      * @return The list of documents whose IDs were provided.
      */
-    List<Document> getDocuments(
-        Iterable<UUID> ids)
+    List<Document> getDocuments(Iterable<UUID> ids)
         throws DocumentStoreException;
 
-    default void updateDocuments(Document... documents) {
+    default void updateDocuments(Document... documents)
+        throws DocumentStoreException, UpdateConflictException {
+
         this.updateDocuments(Arrays.asList(documents), List.of());
     }
 
-    default void updateDocument(@NonNull UUID id, String body, long version) {
+    default void updateDocument(@NonNull UUID id, String body, long version)
+        throws DocumentStoreException, UpdateConflictException {
+
         this.updateDocuments(new Document(id, body, version));
     }
 
-    default Document getDocument(@NonNull UUID id) {
+    default Document getDocument(@NonNull UUID id)
+        throws DocumentStoreException {
+
         return this.getDocuments(List.of(id)).get(0);
     }
 }

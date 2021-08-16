@@ -51,7 +51,6 @@ public class JsonEntity<T> {
     }
 
     public static <T> JsonEntity<T> fromDocument(Class<T> type, Document document) {
-
         return new JsonEntity<T>(
             new EntityId(document.getId()),
             document.getBody() != null
@@ -61,7 +60,6 @@ public class JsonEntity<T> {
     }
 
     public Document toDocument() {
-
         return new Document(
             this.getId().getValue(),
             this.getEntity() != null

@@ -42,7 +42,6 @@ public class JsonEntityTests {
 
     @Test
     public void fromDocument_success() {
-
         TestJsonEntity testObject = new TestJsonEntity();
         testObject.setStringValue("value");
         testObject.setInt64Value(12345);
@@ -70,7 +69,6 @@ public class JsonEntityTests {
 
     @Test
     public void fromDocument_nullDocument() {
-
         JsonEntity<TestJsonEntity> entity = new JsonEntity<>(new EntityId(guid), null, version);
 
         Document document = entity.toDocument();
@@ -87,7 +85,6 @@ public class JsonEntityTests {
 
     @Test
     public void fromDocument_nullValues() {
-
         TestJsonEntity testObject = new TestJsonEntity();
 
         JsonEntity<TestJsonEntity> entity = new JsonEntity<>(new EntityId(guid), testObject, version);
@@ -111,7 +108,6 @@ public class JsonEntityTests {
     @ParameterizedTest
     @ValueSource(longs = {Long.MIN_VALUE, Long.MAX_VALUE, 0, 1, -1})
     public void fromDocument_serializeInt64(long value) {
-
         TestJsonEntity testObject = new TestJsonEntity();
         testObject.setInt64Value(value);
 
@@ -125,7 +121,6 @@ public class JsonEntityTests {
 
     @Test
     public void create_success() {
-
         TestJsonEntity testObject = new TestJsonEntity();
         testObject.setInt64Value(100);
 
@@ -138,7 +133,6 @@ public class JsonEntityTests {
 
     @Test
     public void modify_success() {
-
         TestJsonEntity initialObject = new TestJsonEntity();
         initialObject.setInt64Value(100);
 
@@ -156,7 +150,6 @@ public class JsonEntityTests {
     @NoArgsConstructor
     @JsonEntityType(typeId = 5)
     private class TestJsonEntity {
-
         @Getter
         @Setter
         @SerializedName(value = "string_value")

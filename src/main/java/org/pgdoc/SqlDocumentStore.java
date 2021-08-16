@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class SQLDocumentStore implements DocumentStore {
+public class SqlDocumentStore implements DocumentStore {
 
     private static final String serializationFailureSqlState = "40001";
     private static final String deadlockDetectedSqlState = "40P01";
@@ -45,9 +45,8 @@ public class SQLDocumentStore implements DocumentStore {
     private final Connection connection;
 
     @Override
-    public void updateDocuments(
-        Iterable<Document> updatedDocuments,
-        Iterable<Document> checkedDocuments) {
+    public void updateDocuments(Iterable<Document> updatedDocuments, Iterable<Document> checkedDocuments)
+        throws DocumentStoreException, UpdateConflictException {
 
         List<DocumentUpdate> documentUpdates = new ArrayList<>();
 
@@ -94,7 +93,8 @@ public class SQLDocumentStore implements DocumentStore {
     }
 
     @Override
-    public List<Document> getDocuments(Iterable<UUID> ids) {
+    public List<Document> getDocuments(Iterable<UUID> ids)
+        throws DocumentStoreException {
 
         ArrayList<UUID> idList = new ArrayList<>();
         ids.forEach(idList::add);

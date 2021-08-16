@@ -19,7 +19,8 @@ package org.pgdoc.serialization;
 import lombok.Cleanup;
 import org.pgdoc.Document;
 import org.pgdoc.DocumentStoreException;
-import org.pgdoc.SQLDocumentStore;
+import org.pgdoc.SqlDocumentStore;
+import org.pgdoc.UpdateConflictException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,13 +32,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SQLEntityStore extends SQLDocumentStore {
+public class SqlEntityStore extends SqlDocumentStore {
 
-    public SQLEntityStore(Connection connection) {
+    public SqlEntityStore(Connection connection) {
         super(connection);
     }
 
-    public void modify(JsonEntity<?>... entities) {
+    public void modify(JsonEntity<?>... entities)
+        throws DocumentStoreException, UpdateConflictException {
+
         List<Document> documents =
             Arrays.stream(entities)
                 .map(JsonEntity::toDocument)
@@ -46,7 +49,9 @@ public class SQLEntityStore extends SQLDocumentStore {
         this.updateDocuments(documents, List.of());
     }
 
-    public <T> List<JsonEntity<T>> getAllEntitiesOfType(Class<T> type) {
+    public <T> List<JsonEntity<T>> getAllEntitiesOfType(Class<T> type)
+        throws DocumentStoreException {
+
         try {
             @Cleanup PreparedStatement statement = this.getConnection().prepareStatement(
                 "SELECT id, body, version FROM document WHERE get_document_type(id) = (?)");
@@ -59,13 +64,17 @@ public class SQLEntityStore extends SQLDocumentStore {
         }
     }
 
-    public <T> JsonEntity<T> getEntity(Class<T> type, EntityId entityId) {
+    public <T> JsonEntity<T> getEntity(Class<T> type, EntityId entityId)
+        throws DocumentStoreException {
+
         Document document = this.getDocuments(List.of(entityId.getValue())).get(0);
 
         return JsonEntity.fromDocument(type, document);
     }
 
-    protected <T> List<JsonEntity<T>> executeDocumentQuery(Class<T> type, PreparedStatement statement) throws SQLException {
+    protected <T> List<JsonEntity<T>> executeDocumentQuery(Class<T> type, PreparedStatement statement)
+        throws SQLException {
+
         @Cleanup ResultSet resultSet = statement.executeQuery();
 
         ArrayList<JsonEntity<T>> result = new ArrayList<>();

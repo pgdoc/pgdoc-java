@@ -16,7 +16,7 @@
 
 package org.pgdoc;
 
-public class DocumentStoreException extends RuntimeException {
+public class DocumentStoreException extends Exception {
     public DocumentStoreException(String errorMessage, Throwable error) {
         super(errorMessage, error);
     }

@@ -25,6 +25,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EntityIdTests {
@@ -40,18 +41,34 @@ public class EntityIdTests {
         Integer.MAX_VALUE,
     })
     public void newRandom_success(int type) {
-
         EntityId entityId = EntityId.newRandom(type);
         assertEquals(type, entityId.getType());
     }
 
     @Test
     public void newRandom_Random() {
-
         EntityId entityId1 = EntityId.newRandom(1);
         EntityId entityId2 = EntityId.newRandom(1);
 
         assertNotEquals(entityId1.getValue(), entityId2.getValue());
+    }
+
+    @Test
+    public void getEntityType_success() {
+        int entityType = EntityId.getEntityType(TestObject.class);
+
+        assertEquals(10, entityType);
+    }
+
+    @Test
+    public void getEntityType_error() {
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> EntityId.getEntityType(String.class));
+
+        assertEquals(
+            "The type java.lang.String does not have a JsonEntityType annotation.",
+            exception.getMessage());
     }
 
     @Test
@@ -96,5 +113,9 @@ public class EntityIdTests {
 
         assertEquals(value1.hashCode(), value3.hashCode());
         assertNotEquals(value1.hashCode(), value2.hashCode());
+    }
+
+    @JsonEntityType(typeId = 10)
+    private class TestObject {
     }
 }

@@ -31,9 +31,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SQLEntityStoreTests {
+public class SqlEntityStoreTests {
 
-    private SQLEntityStore store;
+    private SqlEntityStore store;
 
     private static final EntityId id = new EntityId(UUID.randomUUID());
 
@@ -44,14 +44,14 @@ public class SQLEntityStoreTests {
         props.setProperty("password", System.getProperty("db_connection_password"));
 
         Connection connection = DriverManager.getConnection(connectionString, props);
-        this.store = new SQLEntityStore(connection);
+        this.store = new SqlEntityStore(connection);
 
         PreparedStatement statement = connection.prepareStatement("TRUNCATE TABLE document;");
         statement.executeUpdate();
     }
 
     @Test
-    void modify_create() {
+    void modify_create() throws Exception {
         JsonEntity<TestJsonEntity> entity = new JsonEntity<>(
             id,
             new TestJsonEntity("initial"),
@@ -67,7 +67,7 @@ public class SQLEntityStoreTests {
     }
 
     @Test
-    void modify_update() {
+    void modify_update() throws Exception {
         JsonEntity<TestJsonEntity> initialEntity = new JsonEntity<>(
             id,
             new TestJsonEntity("initial"),
@@ -89,7 +89,7 @@ public class SQLEntityStoreTests {
     }
 
     @Test
-    void getAllEntitiesOfType_success() {
+    void getAllEntitiesOfType_success() throws Exception {
         JsonEntity<TestJsonEntity> entity = JsonEntity.create(new TestJsonEntity("initial"));
 
         this.store.modify(entity);
@@ -105,7 +105,6 @@ public class SQLEntityStoreTests {
     @AllArgsConstructor
     @JsonEntityType(typeId = 5)
     private class TestJsonEntity {
-
         @Getter
         private final String value;
     }
