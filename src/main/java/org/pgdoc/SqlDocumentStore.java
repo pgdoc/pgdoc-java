@@ -17,8 +17,6 @@
 package org.pgdoc;
 
 import com.impossibl.postgres.jdbc.PGSQLSimpleException;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.NonNull;
@@ -37,21 +35,23 @@ import java.util.UUID;
 /**
  * An implementation of the <code>DocumentStore</code> interface which relies on PosgreSQL for persistence.
  */
-@AllArgsConstructor
 public class SqlDocumentStore implements DocumentStore {
 
     private static final String serializationFailureSqlState = "40001";
     private static final String deadlockDetectedSqlState = "40P01";
 
-    @NonNull
-    @Getter(value = AccessLevel.PROTECTED)
+    @Getter
     private final Connection connection;
+
+    public SqlDocumentStore(@NonNull Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public void updateDocuments(Iterable<Document> updatedDocuments, Iterable<Document> checkedDocuments)
         throws DocumentStoreException, UpdateConflictException {
 
-        List<DocumentUpdate> documentUpdates = new ArrayList<>();
+        List<DocumentUpdate> documentUpdates = new ArrayList();
 
         for (Document document : updatedDocuments) {
             documentUpdates.add(
@@ -73,8 +73,8 @@ public class SqlDocumentStore implements DocumentStore {
             statement.executeUpdate();
 
         } catch (PGSQLSimpleException exception) {
-            if (exception.getSQLState().equals(serializationFailureSqlState)
-                || exception.getSQLState().equals(deadlockDetectedSqlState)) {
+            if (exception.getSQLState().equals(serializationFailureSqlState) ||
+                exception.getSQLState().equals(deadlockDetectedSqlState)) {
 
                 throw new UpdateConflictException(documentUpdates.get(0).getId(), documentUpdates.get(0).getVersion());
 

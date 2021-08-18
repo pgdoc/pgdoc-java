@@ -57,7 +57,7 @@ public interface DocumentStore {
     }
 
     /**
-     * Retrieves a documents given its ID.
+     * Retrieves a document given its ID.
      *
      * @param id the ID of the document to retrieve
      * @return the document whose ID was provided

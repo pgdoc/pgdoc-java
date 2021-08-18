@@ -21,7 +21,7 @@ import lombok.Getter;
 import java.util.UUID;
 
 /**
- * Thrown when an attempt is made to modify a document using the wrong base version.
+ * Thrown when an attempt to modify a document is made using the wrong base version.
  */
 public class UpdateConflictException extends Exception {
 

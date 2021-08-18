@@ -17,6 +17,7 @@
 package org.pgdoc;
 
 import com.google.gson.Gson;
+import lombok.Cleanup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,7 +57,7 @@ public class SqlDocumentStoreTests {
         Connection connection = DriverManager.getConnection(connectionString, props);
         this.store = new SqlDocumentStore(connection);
 
-        PreparedStatement statement = connection.prepareStatement("TRUNCATE TABLE document;");
+        @Cleanup PreparedStatement statement = connection.prepareStatement("TRUNCATE TABLE document;");
         statement.executeUpdate();
     }
 
@@ -297,10 +298,9 @@ public class SqlDocumentStoreTests {
 
     @Test
     public void getDocuments_noDocument() throws Exception {
-        List<Document> documents = store.getDocuments(List.of(ids[0]));
+        List<Document> documents = store.getDocuments(List.of());
 
-        assertEquals(1, documents.size());
-        assertDocument(documents.get(0), ids[0], null, 0);
+        assertEquals(0, documents.size());
     }
 
     //endregion

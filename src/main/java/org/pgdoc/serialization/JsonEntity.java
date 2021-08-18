@@ -37,7 +37,7 @@ public class JsonEntity<T> {
     static {
         GsonBuilder builder = new GsonBuilder();
         Converters.registerAll(builder);
-        gson = builder.create();
+        setGson(builder.create());
     }
 
     /**
@@ -65,7 +65,7 @@ public class JsonEntity<T> {
     }
 
     /**
-     * Converts a <code>Document</code> object to a <code>JsonEntity</code> by deserializing its JSON body.
+     * Converts a <code>Document</code> object to a <code>JsonEntity&lt;T></code> by deserializing its JSON body.
      */
     public static <T> JsonEntity<T> fromDocument(Class<T> type, Document document) {
         return new JsonEntity<T>(
@@ -77,7 +77,7 @@ public class JsonEntity<T> {
     }
 
     /**
-     * Converts a this <code>JsonEntity</code> object to a <code>Document</code> by serializing it to JSON.
+     * Converts this <code>JsonEntity&lt;T></code> object to a <code>Document</code> by serializing its body to JSON.
      */
     public Document toDocument() {
         return new Document(
@@ -89,14 +89,15 @@ public class JsonEntity<T> {
     }
 
     /**
-     * Returns a copy of this <code>JsonEntity</code> object but replaces the entity with a new one.
+     * Returns a copy of this <code>JsonEntity&lt;T></code> object with the same ID and version, but replaces the
+     * body with a new one.
      */
     public JsonEntity<T> modify(T newValue) {
         return new JsonEntity<T>(getId(), newValue, getVersion());
     }
 
     /**
-     * Creates a new <code>JsonEntity</code> object with a new random ID and a version set to zero.
+     * Creates a new <code>JsonEntity&lt;T></code> object with a new random ID and a version set to zero.
      */
     public static <T> JsonEntity<T> create(T value) {
         return new JsonEntity<T>(
