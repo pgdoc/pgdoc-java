@@ -54,7 +54,10 @@ public class SqlEntityStore extends SqlDocumentStore {
 
         try {
             @Cleanup PreparedStatement statement = this.getConnection().prepareStatement(
-                "SELECT id, body, version FROM document WHERE get_document_type(id) = (?)");
+                "SELECT id, body, version " +
+                    "FROM document " +
+                    "WHERE get_document_type(id) = (?) AND " +
+                    "      body IS NOT NULL");
 
             statement.setInt(1, EntityId.getEntityType(type));
 

@@ -73,7 +73,7 @@ public class EntityIdTests {
 
     @Test
     public void withType_success() {
-        EntityId entityId1 = EntityId.parse(guid);
+        EntityId entityId1 = EntityId.fromString(guid);
         EntityId entityId2 = entityId1.withType(0x123456ab);
 
         assertEquals("123456ab-fda9-11e8-b568-0800200c9a66", entityId2.getValue().toString());
@@ -81,7 +81,7 @@ public class EntityIdTests {
 
     @Test
     public void toString_success() {
-        EntityId value = EntityId.parse(guid);
+        EntityId value = EntityId.fromString(guid);
 
         assertEquals(guid, value.toString());
     }

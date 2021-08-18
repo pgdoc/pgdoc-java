@@ -23,11 +23,20 @@ import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.UUID;
 
+/**
+ * A class encapsulating a <code>UUID</code> object whose first 32 bits are used to represent an entity type.
+ */
 public class EntityId {
 
+    /**
+     * Gets the <code>UUID</code> representation of this <code>EntityId</code> object.
+     */
     @Getter
     private final UUID value;
 
+    /**
+     * Gets the type of the entity represented by this <code>EntityId</code> object.
+     */
     @Getter
     private final int type;
 
@@ -36,6 +45,9 @@ public class EntityId {
         this.type = (int) (id.getMostSignificantBits() >> 32);
     }
 
+    /**
+     * Generates a random <code>EntityId</code> value with the specified entity type.
+     */
     public static EntityId newRandom(int type) {
         byte[] bytes = new byte[16];
 
@@ -53,10 +65,17 @@ public class EntityId {
         return new EntityId(new UUID(high, low));
     }
 
-    public static EntityId parse(@NonNull String uuid) {
+    /**
+     * Parses an <code>EntityId</code> object from a string value.
+     */
+    public static EntityId fromString(@NonNull String uuid) {
         return new EntityId(UUID.fromString(uuid));
     }
 
+    /**
+     * Returns the entity type associated with a class. The target class must be annotated with the
+     * {@link JsonEntityType} annotation.
+     */
     public static int getEntityType(@NonNull Class<?> type) {
         JsonEntityType annotation = type.getAnnotation(JsonEntityType.class);
 
@@ -68,6 +87,10 @@ public class EntityId {
         }
     }
 
+    /**
+     * Returns a new identical <code>EntityId</code> object, except that the entity type is modified to the
+     * specified one.
+     */
     public EntityId withType(int type) {
         byte[] bytes = new byte[16];
 

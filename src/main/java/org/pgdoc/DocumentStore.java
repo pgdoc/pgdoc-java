@@ -22,38 +22,46 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * An object through which one can retrieve and modify documents.
+ */
 public interface DocumentStore {
 
     /**
-     * Updates atomically the body of several objects.
+     * Updates atomically the body of multiple documents.
      *
-     * @param updatedDocuments The documents being updated.
-     * @param checkedDocuments The documents of which the versions are checked, but which are not updated.
+     * @param updatedDocuments the documents being updated
+     * @param checkedDocuments the documents whose versions are checked, but which are not updated
      */
     void updateDocuments(Iterable<Document> updatedDocuments, Iterable<Document> checkedDocuments)
         throws DocumentStoreException, UpdateConflictException;
 
     /**
-     * Gets a list of documents given their IDs.
+     * Retrieves multiple documents given their IDs.
      *
-     * @param ids The IDs of the documents to retrieve.
-     * @return The list of documents whose IDs were provided.
+     * @param ids the IDs of the documents to retrieve
+     * @return a list of documents whose IDs were provided
      */
     List<Document> getDocuments(Iterable<UUID> ids)
         throws DocumentStoreException;
 
+    /**
+     * Updates atomically the body of multiple documents.
+     *
+     * @param documents the documents being updated
+     */
     default void updateDocuments(Document... documents)
         throws DocumentStoreException, UpdateConflictException {
 
         this.updateDocuments(Arrays.asList(documents), List.of());
     }
 
-    default void updateDocument(@NonNull UUID id, String body, long version)
-        throws DocumentStoreException, UpdateConflictException {
-
-        this.updateDocuments(new Document(id, body, version));
-    }
-
+    /**
+     * Retrieves a documents given its ID.
+     *
+     * @param id the ID of the document to retrieve
+     * @return the document whose ID was provided
+     */
     default Document getDocument(@NonNull UUID id)
         throws DocumentStoreException {
 

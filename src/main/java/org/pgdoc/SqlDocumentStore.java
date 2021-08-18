@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * An implementation of the <code>DocumentStore</code> interface which relies on PosgreSQL for persistence.
+ */
 @AllArgsConstructor
 public class SqlDocumentStore implements DocumentStore {
 
@@ -68,8 +71,8 @@ public class SqlDocumentStore implements DocumentStore {
                 connection.createArrayOf("document_update", documentUpdates.toArray(new DocumentUpdate[0])));
 
             statement.executeUpdate();
-        } catch (PGSQLSimpleException exception) {
 
+        } catch (PGSQLSimpleException exception) {
             if (exception.getSQLState().equals(serializationFailureSqlState)
                 || exception.getSQLState().equals(deadlockDetectedSqlState)) {
 
@@ -86,8 +89,8 @@ public class SqlDocumentStore implements DocumentStore {
             } else {
                 throw new DocumentStoreException(exception.getMessage(), exception);
             }
-        } catch (SQLException sqlException) {
 
+        } catch (SQLException sqlException) {
             throw new DocumentStoreException(sqlException.getMessage(), sqlException);
         }
     }
@@ -105,8 +108,8 @@ public class SqlDocumentStore implements DocumentStore {
 
         Map<UUID, Document> resultMap = new HashMap<>();
         try {
-
-            @Cleanup PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM get_documents(?)");
+            @Cleanup PreparedStatement statement = this.connection.prepareStatement(
+                "SELECT id, body, version FROM get_documents(?)");
 
             statement.setObject(1, connection.createArrayOf("uuid", idList.toArray(new UUID[0])));
 
@@ -116,6 +119,7 @@ public class SqlDocumentStore implements DocumentStore {
                 UUID id = resultSet.getObject("id", java.util.UUID.class);
                 resultMap.put(id, new Document(id, resultSet.getString("body"), resultSet.getLong("version")));
             }
+
         } catch (SQLException sqlException) {
             throw new DocumentStoreException(sqlException.getMessage(), sqlException);
         }

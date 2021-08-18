@@ -212,8 +212,8 @@ public class SqlDocumentStoreTests {
 
     @Test
     public void updateDocuments_multipleDocumentsSuccess() throws Exception {
-        store.updateDocument(ids[0], "{\"abc\":\"def\"}", 0);
-        store.updateDocument(ids[1], "{\"ghi\":\"jkl\"}", 0);
+        updateDocument(ids[0], "{\"abc\":\"def\"}", 0);
+        updateDocument(ids[1], "{\"ghi\":\"jkl\"}", 0);
 
         store.updateDocuments(
             List.of(
@@ -240,7 +240,7 @@ public class SqlDocumentStoreTests {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     public void updateDocuments_multipleDocumentsConflict(boolean checkOnly) throws Exception {
-        store.updateDocument(ids[0], "{\"abc\":\"def\"}", 0);
+        updateDocument(ids[0], "{\"abc\":\"def\"}", 0);
 
         UpdateConflictException exception = assertThrows(
             UpdateConflictException.class,
@@ -283,8 +283,8 @@ public class SqlDocumentStoreTests {
 
     @Test
     public void getDocuments_multipleDocuments() throws Exception {
-        store.updateDocument(ids[0], "{\"abc\":\"def\"}", 0);
-        store.updateDocument(ids[1], "{\"ghi\":\"jkl\"}", 0);
+        updateDocument(ids[0], "{\"abc\":\"def\"}", 0);
+        updateDocument(ids[1], "{\"ghi\":\"jkl\"}", 0);
 
         List<Document> documents = store.getDocuments(List.of(ids[0], ids[2], ids[0], ids[1]));
 
@@ -307,11 +307,21 @@ public class SqlDocumentStoreTests {
 
     //region Helper Methods
 
-    private void updateDocument(String body, long version) throws DocumentStoreException, UpdateConflictException {
-        store.updateDocument(ids[0], body, version);
+    private void updateDocument(String body, long version)
+        throws DocumentStoreException, UpdateConflictException {
+
+        updateDocument(ids[0], body, version);
     }
 
-    private void checkDocument(long version) throws DocumentStoreException, UpdateConflictException {
+    private void updateDocument(UUID id, String body, long version)
+        throws DocumentStoreException, UpdateConflictException {
+
+        store.updateDocuments(new Document(id, body, version));
+    }
+
+    private void checkDocument(long version)
+        throws DocumentStoreException, UpdateConflictException {
+
         store.updateDocuments(
             List.of(),
             List.of(new Document(ids[0], "{\"ignored\":\"ignored\"}", version)));

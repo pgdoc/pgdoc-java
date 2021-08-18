@@ -21,13 +21,19 @@ import lombok.Getter;
 import java.util.UUID;
 
 /**
- * Represents an error caused by an attempt to modify a record using the wrong base version.
+ * Thrown when an attempt is made to modify a document using the wrong base version.
  */
 public class UpdateConflictException extends Exception {
 
+    /**
+     * Gets the ID of the document that caused a conflict.
+     */
     @Getter
     private final UUID id;
 
+    /**
+     * Gets the version of the document that caused a conflict.
+     */
     @Getter
     private final long version;
 
