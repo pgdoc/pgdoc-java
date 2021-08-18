@@ -16,7 +16,8 @@
 
 package org.pgdoc.serialization;
 
-import org.pgdoc.Document;
+import lombok.Getter;
+import lombok.NonNull;
 import org.pgdoc.DocumentStore;
 import org.pgdoc.DocumentStoreException;
 import org.pgdoc.UpdateConflictException;
@@ -28,7 +29,17 @@ import java.util.stream.StreamSupport;
 /**
  * An object through which one can retrieve and modify documents represented as <code>JsonEntity&lt;T></code> objects.
  */
-public interface EntityStore extends DocumentStore {
+public class EntityStore {
+
+    /**
+     * Gets the underlying <code>DocumentStore</code> object used to retrieve and modify documents.
+     */
+    @Getter
+    private final DocumentStore documentStore;
+
+    public EntityStore(@NonNull DocumentStore documentStore) {
+        this.documentStore = documentStore;
+    }
 
     /**
      * Updates atomically the body of multiple documents represented as <code>JsonEntity&lt;T></code> objects.
@@ -36,10 +47,10 @@ public interface EntityStore extends DocumentStore {
      * @param updatedDocuments the documents being updated
      * @param checkedDocuments the documents whose versions are checked, but which are not updated
      */
-    default void updateEntities(Iterable<JsonEntity<?>> updatedDocuments, Iterable<JsonEntity<?>> checkedDocuments)
+    public void updateEntities(Iterable<JsonEntity<?>> updatedDocuments, Iterable<JsonEntity<?>> checkedDocuments)
         throws DocumentStoreException, UpdateConflictException {
 
-        this.updateDocuments(
+        this.documentStore.updateDocuments(
             StreamSupport.stream(updatedDocuments.spliterator(), false)
                 .map(JsonEntity::toDocument)
                 ::iterator,
@@ -53,7 +64,7 @@ public interface EntityStore extends DocumentStore {
      *
      * @param documents the documents being updated
      */
-    default void updateEntities(JsonEntity<?>... documents)
+    public void updateEntities(JsonEntity<?>... documents)
         throws DocumentStoreException, UpdateConflictException {
 
         this.updateEntities(Arrays.asList(documents), List.of());
@@ -65,9 +76,9 @@ public interface EntityStore extends DocumentStore {
      * @param type     the type used to deserialize the JSON body of the document
      * @param entityId the ID of the document to retrieve
      */
-    default <T> JsonEntity<T> getEntity(Class<T> type, EntityId entityId)
+    public <T> JsonEntity<T> getEntity(Class<T> type, EntityId entityId)
         throws DocumentStoreException {
 
-        return JsonEntity.fromDocument(type, this.getDocument(entityId.getValue()));
+        return JsonEntity.fromDocument(type, this.documentStore.getDocument(entityId.getValue()));
     }
 }

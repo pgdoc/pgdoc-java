@@ -23,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pgdoc.SqlDocumentStore;
 
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,9 +32,11 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EntityStoreTests {
 
+    private SqlDocumentStore documentStore;
     private EntityStore store;
 
     private static final EntityId id = new EntityId(UUID.randomUUID());
@@ -46,23 +47,36 @@ public class EntityStoreTests {
         Properties props = new Properties();
         props.setProperty("password", System.getProperty("db_connection_password"));
 
-        Connection connection = DriverManager.getConnection(connectionString, props);
-        this.store = new SqlEntityStore(connection);
+        this.documentStore = new SqlDocumentStore(DriverManager.getConnection(connectionString, props));
+        this.store = new EntityStore(documentStore);
 
-        @Cleanup PreparedStatement statement = connection.prepareStatement("TRUNCATE TABLE document;");
+        @Cleanup PreparedStatement statement =
+            documentStore.getConnection().prepareStatement("TRUNCATE TABLE document;");
         statement.executeUpdate();
     }
 
     @Test
+    public void new_nullArgument() {
+        assertThrows(
+            NullPointerException.class,
+            () -> new EntityStore(null));
+    }
+
+    @Test
+    void getDocumentStore_success() {
+        assertEquals(this.documentStore, this.store.getDocumentStore());
+    }
+
+    @Test
     void updateEntities_create() throws Exception {
-        JsonEntity<TestJsonEntity> entity = new JsonEntity<>(
+        JsonEntity<StringJsonEntity> entity = new JsonEntity<>(
             id,
-            new TestJsonEntity("initial"),
+            new StringJsonEntity("initial"),
             0);
 
         this.store.updateEntities(entity);
 
-        JsonEntity<TestJsonEntity> result = this.store.getEntity(TestJsonEntity.class, id);
+        JsonEntity<StringJsonEntity> result = this.store.getEntity(StringJsonEntity.class, id);
 
         assertEquals(id, result.getId());
         assertEquals("initial", result.getEntity().getValue());
@@ -71,20 +85,19 @@ public class EntityStoreTests {
 
     @Test
     void updateEntities_update() throws Exception {
-        JsonEntity<TestJsonEntity> initialEntity = new JsonEntity<>(
+        JsonEntity<StringJsonEntity> initialEntity = new JsonEntity<>(
             id,
-            new TestJsonEntity("initial"),
+            new StringJsonEntity("initial"),
             0);
-
-        JsonEntity<TestJsonEntity> updatedEntity = new JsonEntity<>(
+        JsonEntity<StringJsonEntity> updatedEntity = new JsonEntity<>(
             id,
-            new TestJsonEntity("updated"),
+            new StringJsonEntity("updated"),
             1);
 
         this.store.updateEntities(initialEntity);
         this.store.updateEntities(updatedEntity);
 
-        JsonEntity<TestJsonEntity> result = this.store.getEntity(TestJsonEntity.class, id);
+        JsonEntity<StringJsonEntity> result = this.store.getEntity(StringJsonEntity.class, id);
 
         assertEquals(id, result.getId());
         assertEquals("updated", result.getEntity().getValue());
@@ -93,11 +106,11 @@ public class EntityStoreTests {
 
     @Test
     void updateEntities_check() throws Exception {
-        JsonEntity<TestJsonEntity> initialEntity = new JsonEntity<>(
+        JsonEntity<StringJsonEntity> initialEntity = new JsonEntity<>(
             id,
-            new TestJsonEntity("initial"),
+            new StringJsonEntity("initial"),
             0);
-        JsonEntity<TestJsonEntity> checkEntity = new JsonEntity<>(
+        JsonEntity<StringJsonEntity> checkEntity = new JsonEntity<>(
             id,
             null,
             1);
@@ -105,7 +118,7 @@ public class EntityStoreTests {
         this.store.updateEntities(initialEntity);
         this.store.updateEntities(List.of(), List.of(checkEntity));
 
-        JsonEntity<TestJsonEntity> result = this.store.getEntity(TestJsonEntity.class, id);
+        JsonEntity<StringJsonEntity> result = this.store.getEntity(StringJsonEntity.class, id);
 
         assertEquals(id, result.getId());
         assertEquals("initial", result.getEntity().getValue());
@@ -114,12 +127,12 @@ public class EntityStoreTests {
 
     @Test
     void updateEntities_multiple() throws Exception {
-        JsonEntity<TestJsonEntity> entity1 = JsonEntity.create(new TestJsonEntity("initial1"));
+        JsonEntity<StringJsonEntity> entity1 = JsonEntity.create(new StringJsonEntity("initial1"));
         JsonEntity<IntJsonEntity> entity2 = JsonEntity.create(new IntJsonEntity(1000));
 
         this.store.updateEntities(entity1, entity2);
 
-        JsonEntity<TestJsonEntity> result1 = this.store.getEntity(TestJsonEntity.class, entity1.getId());
+        JsonEntity<StringJsonEntity> result1 = this.store.getEntity(StringJsonEntity.class, entity1.getId());
         JsonEntity<IntJsonEntity> result2 = this.store.getEntity(IntJsonEntity.class, entity2.getId());
 
         assertEquals(entity1.getId(), result1.getId());
@@ -132,22 +145,16 @@ public class EntityStoreTests {
 
     @Test
     void getEntity_noEntity() throws Exception {
-        JsonEntity<TestJsonEntity> result = this.store.getEntity(TestJsonEntity.class, id);
+        JsonEntity<StringJsonEntity> result = this.store.getEntity(StringJsonEntity.class, id);
 
         assertEquals(id, result.getId());
         assertNull(result.getEntity());
         assertEquals(0, result.getVersion());
     }
 
-    private class SqlEntityStore extends SqlDocumentStore implements EntityStore {
-        public SqlEntityStore(Connection connection) {
-            super(connection);
-        }
-    }
-
     @AllArgsConstructor
     @JsonEntityType(typeId = 5)
-    private class TestJsonEntity {
+    private class StringJsonEntity {
         @Getter
         private final String value;
     }

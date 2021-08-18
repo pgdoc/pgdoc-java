@@ -23,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pgdoc.SqlDocumentStore;
 
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -36,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DocumentQueryTests {
 
-    private SqlEntityStore store;
+    private SqlDocumentStore documentStore;
+    private EntityStore store;
 
     private static final EntityId id = new EntityId(UUID.randomUUID());
 
@@ -46,10 +46,11 @@ public class DocumentQueryTests {
         Properties props = new Properties();
         props.setProperty("password", System.getProperty("db_connection_password"));
 
-        Connection connection = DriverManager.getConnection(connectionString, props);
-        this.store = new SqlEntityStore(connection);
+        this.documentStore = new SqlDocumentStore(DriverManager.getConnection(connectionString, props));
+        this.store = new EntityStore(documentStore);
 
-        @Cleanup PreparedStatement statement = connection.prepareStatement("TRUNCATE TABLE document;");
+        @Cleanup PreparedStatement statement =
+            documentStore.getConnection().prepareStatement("TRUNCATE TABLE document;");
         statement.executeUpdate();
     }
 
@@ -62,7 +63,7 @@ public class DocumentQueryTests {
 
         List<JsonEntity<TestJsonEntity>> result = DocumentQuery.execute(
             TestJsonEntity.class,
-            this.store.getConnection().prepareStatement(
+            this.documentStore.getConnection().prepareStatement(
                 "SELECT id, body, version FROM document WHERE get_document_type(id) = 5"));
 
         assertEquals(1, result.size());
@@ -81,19 +82,13 @@ public class DocumentQueryTests {
 
         List<JsonEntity<TestJsonEntity>> result = DocumentQuery.execute(
             TestJsonEntity.class,
-            this.store.getConnection().prepareStatement(
+            this.documentStore.getConnection().prepareStatement(
                 "SELECT id, body, version FROM document WHERE get_document_type(id) = 5"));
 
         assertEquals(1, result.size());
         assertEquals(initialEntity.getId(), result.get(0).getId());
         assertNull(result.get(0).getEntity());
         assertEquals(2, result.get(0).getVersion());
-    }
-
-    private class SqlEntityStore extends SqlDocumentStore implements EntityStore {
-        public SqlEntityStore(Connection connection) {
-            super(connection);
-        }
     }
 
     @AllArgsConstructor

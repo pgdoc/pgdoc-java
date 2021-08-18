@@ -88,8 +88,7 @@ public class EntityId {
     }
 
     /**
-     * Returns a new identical <code>EntityId</code> object, except that the entity type is modified to the
-     * specified one.
+     * Returns a copy of this <code>EntityId</code> object with a different entity type.
      */
     public EntityId withType(int type) {
         byte[] bytes = new byte[16];

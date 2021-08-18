@@ -26,13 +26,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DocumentQuery {
+public interface DocumentQuery {
 
     /**
      * Executes an SQL query and converts the result into a list of <code>JsonEntity&lt;T></code> objects. The query
      * must return the <code>id</code>, <code>body</code> and <code>version</code> columns.
      */
-    public static <T> List<JsonEntity<T>> execute(Class<T> type, PreparedStatement statement)
+    static <T> List<JsonEntity<T>> execute(Class<T> type, PreparedStatement statement)
         throws SQLException {
 
         @Cleanup ResultSet resultSet = statement.executeQuery();

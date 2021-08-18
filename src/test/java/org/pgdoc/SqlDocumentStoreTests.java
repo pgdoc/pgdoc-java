@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SqlDocumentStoreTests {
 
+    private Connection connection;
     private SqlDocumentStore store;
 
     private static final UUID[] ids = IntStream.rangeClosed(0, 10)
@@ -54,10 +55,10 @@ public class SqlDocumentStoreTests {
         Properties props = new Properties();
         props.setProperty("password", System.getProperty("db_connection_password"));
 
-        Connection connection = DriverManager.getConnection(connectionString, props);
-        this.store = new SqlDocumentStore(connection);
+        this.connection = DriverManager.getConnection(connectionString, props);
+        this.store = new SqlDocumentStore(this.connection);
 
-        @Cleanup PreparedStatement statement = connection.prepareStatement("TRUNCATE TABLE document;");
+        @Cleanup PreparedStatement statement = store.getConnection().prepareStatement("TRUNCATE TABLE document;");
         statement.executeUpdate();
     }
 
@@ -68,6 +69,15 @@ public class SqlDocumentStoreTests {
         assertThrows(
             NullPointerException.class,
             () -> new SqlDocumentStore(null));
+    }
+
+    //endregion
+
+    //region getConnection
+
+    @Test
+    public void getConnection_success() {
+        assertEquals(this.connection, this.store.getConnection());
     }
 
     //endregion
