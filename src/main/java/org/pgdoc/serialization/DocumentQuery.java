@@ -29,7 +29,7 @@ import java.util.List;
 public interface DocumentQuery {
 
     /**
-     * Executes a SQL query and converts the result into a list of <code>JsonEntity&lt;T></code> objects. The query
+     * Executes a SQL query and converts the result into a list of <code>JsonEntity</code> objects. The query
      * must return the <code>id</code>, <code>body</code> and <code>version</code> columns.
      */
     static <T> List<JsonEntity<T>> execute(Class<T> type, PreparedStatement statement)

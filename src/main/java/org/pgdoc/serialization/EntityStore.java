@@ -28,7 +28,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * The <code>EntityStore</code> class is used to retrieve and modify documents represented as
- * <code>JsonEntity&lt;T></code> objects.
+ * <code>JsonEntity</code> objects.
  */
 public class EntityStore {
 
@@ -43,7 +43,7 @@ public class EntityStore {
     }
 
     /**
-     * Updates atomically the body of multiple documents represented as <code>JsonEntity&lt;T></code> objects.
+     * Updates atomically the body of multiple documents represented as <code>JsonEntity</code> objects.
      *
      * @param updatedDocuments the documents being updated
      * @param checkedDocuments the documents whose versions are checked, but which are not updated
@@ -61,7 +61,7 @@ public class EntityStore {
     }
 
     /**
-     * Updates atomically the body of multiple documents represented as <code>JsonEntity&lt;T></code> objects.
+     * Updates atomically the body of multiple documents represented as <code>JsonEntity</code> objects.
      *
      * @param documents the documents being updated
      */
@@ -72,10 +72,11 @@ public class EntityStore {
     }
 
     /**
-     * Retrieves a document given its ID, represented as a <code>JsonEntity&lt;T></code> object.
+     * Retrieves a document given its ID, represented as a <code>JsonEntity</code> object.
      *
      * @param type     the type used to deserialize the JSON body of the document
      * @param entityId the ID of the document to retrieve
+     * @return the document whose ID was provided
      */
     public <T> JsonEntity<T> getEntity(Class<T> type, EntityId entityId)
         throws DocumentStoreException {

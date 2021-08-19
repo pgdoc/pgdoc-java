@@ -19,15 +19,23 @@ package org.pgdoc.serialization;
 import com.fatboyindustrial.gsonjavatime.Converters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.pgdoc.Document;
 
+import java.lang.reflect.Type;
 
 /**
- * The <code>JsonEntity&lt;T></code> class represents a document comprised of a unique ID, a deserialized JSON body
- * and a version number.
+ * The <code>JsonEntity</code> class represents a document comprised of a unique ID, a deserialized JSON body and a
+ * version number.
  *
  * @param <T> the type used to deserialize the JSON body of the document
  */
@@ -39,6 +47,7 @@ public class JsonEntity<T> {
     static {
         GsonBuilder builder = new GsonBuilder();
         Converters.registerAll(builder);
+        builder.registerTypeAdapter(EntityId.class, new EntityIdSerializer());
         setGson(builder.create());
     }
 
@@ -67,7 +76,7 @@ public class JsonEntity<T> {
     }
 
     /**
-     * Converts a <code>Document</code> object to a <code>JsonEntity&lt;T></code> by deserializing its JSON body.
+     * Converts a <code>Document</code> object to a <code>JsonEntity</code> by deserializing its JSON body.
      */
     public static <T> JsonEntity<T> fromDocument(Class<T> type, Document document) {
         return new JsonEntity<T>(
@@ -79,7 +88,7 @@ public class JsonEntity<T> {
     }
 
     /**
-     * Converts this <code>JsonEntity&lt;T></code> object to a <code>Document</code> by serializing its body to JSON.
+     * Converts this <code>JsonEntity</code> object to a <code>Document</code> by serializing its body to JSON.
      */
     public Document toDocument() {
         return new Document(
@@ -91,7 +100,7 @@ public class JsonEntity<T> {
     }
 
     /**
-     * Returns a copy of this <code>JsonEntity&lt;T></code> object with the same ID and version, but replaces the
+     * Returns a copy of this <code>JsonEntity</code> object with the same ID and version, but replaces the
      * body with a new one.
      */
     public JsonEntity<T> modify(T newValue) {
@@ -99,12 +108,27 @@ public class JsonEntity<T> {
     }
 
     /**
-     * Creates a new <code>JsonEntity&lt;T></code> object with a new random ID and a version set to zero.
+     * Creates a new <code>JsonEntity</code> object with a new random ID and a version set to zero.
      */
     public static <T> JsonEntity<T> create(T value) {
         return new JsonEntity<T>(
             EntityId.newRandom(EntityId.getEntityType(value.getClass())),
             value,
             0);
+    }
+
+    private static class EntityIdSerializer implements JsonSerializer<EntityId>, JsonDeserializer<EntityId> {
+        @Override
+        public EntityId deserialize(JsonElement json, Type type, JsonDeserializationContext context)
+            throws JsonParseException {
+
+            String jsonString = json.getAsString();
+            return EntityId.fromString(jsonString);
+        }
+
+        @Override
+        public JsonElement serialize(EntityId entityId, Type type, JsonSerializationContext jsonSerializationContext) {
+            return new JsonPrimitive(entityId.toString());
+        }
     }
 }
