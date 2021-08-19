@@ -22,7 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates which entity type to use when generating an <code>EntityId</code> for the annotated type.
+ * The <code>JsonEntityType</code> annotation indicates which entity type should be used when generating an
+ * <code>EntityId</code> for the annotated type.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

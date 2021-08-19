@@ -33,7 +33,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * An implementation of the <code>DocumentStore</code> interface which relies on PosgreSQL for persistence.
+ * The <code>SqlDocumentStore</code> class is an implementation of the <code>DocumentStore</code> interface that
+ * relies on PosgreSQL for persistence.
  */
 public class SqlDocumentStore implements DocumentStore {
 

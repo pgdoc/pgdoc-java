@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * An object through which one can retrieve and modify documents.
+ * The <code>DocumentStore</code> interface is used to retrieve and modify documents.
  */
 public interface DocumentStore {
 

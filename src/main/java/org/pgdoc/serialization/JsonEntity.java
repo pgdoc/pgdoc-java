@@ -24,10 +24,12 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.pgdoc.Document;
 
+
 /**
- * A class representing a document comprised of a unique ID, a JSON body and a version number.
+ * The <code>JsonEntity&lt;T></code> class represents a document comprised of a unique ID, a deserialized JSON body
+ * and a version number.
  *
- * @param <T>
+ * @param <T> the type used to deserialize the JSON body of the document
  */
 public class JsonEntity<T> {
 

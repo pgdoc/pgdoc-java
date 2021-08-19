@@ -22,7 +22,7 @@ import lombok.NonNull;
 import java.util.UUID;
 
 /**
- * A class representing a document comprised of a unique ID, a JSON body and a version number.
+ * The <code>Document</code> class represents a document comprised of a unique ID, a JSON body and a version number.
  */
 public class Document {
 

@@ -24,7 +24,8 @@ import java.security.SecureRandom;
 import java.util.UUID;
 
 /**
- * A class encapsulating a <code>UUID</code> object whose first 32 bits are used to represent an entity type.
+ * The <code>EntityId</code> class encapsulates a <code>UUID</code> object whose first 32 bits are used to represent
+ * an entity type.
  */
 public class EntityId {
 

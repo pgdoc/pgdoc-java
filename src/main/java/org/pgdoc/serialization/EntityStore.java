@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 /**
- * An object through which one can retrieve and modify documents represented as <code>JsonEntity&lt;T></code> objects.
+ * The <code>EntityStore</code> class is used to retrieve and modify documents represented as
+ * <code>JsonEntity&lt;T></code> objects.
  */
 public class EntityStore {
 
