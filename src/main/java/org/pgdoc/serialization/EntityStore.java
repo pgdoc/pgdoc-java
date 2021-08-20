@@ -19,7 +19,6 @@ package org.pgdoc.serialization;
 import lombok.Getter;
 import lombok.NonNull;
 import org.pgdoc.DocumentStore;
-import org.pgdoc.DocumentStoreException;
 import org.pgdoc.UpdateConflictException;
 
 import java.util.Arrays;
@@ -27,8 +26,8 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 /**
- * The <code>EntityStore</code> class is used to retrieve and modify documents represented as
- * <code>JsonEntity</code> objects.
+ * The <code>EntityStore</code> class is used to retrieve and modify documents represented as <code>JsonEntity</code>
+ * objects.
  */
 public class EntityStore {
 
@@ -49,7 +48,7 @@ public class EntityStore {
      * @param checkedDocuments the documents whose versions are checked, but which are not updated
      */
     public void updateEntities(Iterable<JsonEntity<?>> updatedDocuments, Iterable<JsonEntity<?>> checkedDocuments)
-        throws DocumentStoreException, UpdateConflictException {
+        throws UpdateConflictException {
 
         this.documentStore.updateDocuments(
             StreamSupport.stream(updatedDocuments.spliterator(), false)
@@ -66,7 +65,7 @@ public class EntityStore {
      * @param documents the documents being updated
      */
     public void updateEntities(JsonEntity<?>... documents)
-        throws DocumentStoreException, UpdateConflictException {
+        throws UpdateConflictException {
 
         this.updateEntities(Arrays.asList(documents), List.of());
     }
@@ -78,9 +77,7 @@ public class EntityStore {
      * @param entityId the ID of the document to retrieve
      * @return the document whose ID was provided
      */
-    public <T> JsonEntity<T> getEntity(Class<T> type, EntityId entityId)
-        throws DocumentStoreException {
-
+    public <T> JsonEntity<T> getEntity(Class<T> type, EntityId entityId) {
         return JsonEntity.fromDocument(type, this.documentStore.getDocument(entityId.getValue()));
     }
 }

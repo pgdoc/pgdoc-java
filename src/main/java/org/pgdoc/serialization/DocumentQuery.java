@@ -18,6 +18,7 @@ package org.pgdoc.serialization;
 
 import lombok.Cleanup;
 import org.pgdoc.Document;
+import org.pgdoc.DocumentStoreException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,23 +33,31 @@ public interface DocumentQuery {
      * Executes a SQL query and converts the result into a list of <code>JsonEntity</code> objects. The query
      * must return the <code>id</code>, <code>body</code> and <code>version</code> columns.
      */
-    static <T> List<JsonEntity<T>> execute(Class<T> type, PreparedStatement statement)
-        throws SQLException {
+    static <T> List<JsonEntity<T>> execute(Class<T> type, DocumentQueryBuilder queryBuilder) {
+        try {
+            @Cleanup ResultSet resultSet = queryBuilder.createQuery().executeQuery();
 
-        @Cleanup ResultSet resultSet = statement.executeQuery();
+            ArrayList<JsonEntity<T>> result = new ArrayList<>();
 
-        ArrayList<JsonEntity<T>> result = new ArrayList<>();
+            while (resultSet.next()) {
+                Document document = new Document(
+                    resultSet.getObject("id", java.util.UUID.class),
+                    resultSet.getString("body"),
+                    resultSet.getLong("version")
+                );
 
-        while (resultSet.next()) {
-            Document document = new Document(
-                resultSet.getObject("id", java.util.UUID.class),
-                resultSet.getString("body"),
-                resultSet.getLong("version")
-            );
+                result.add(JsonEntity.fromDocument(type, document));
+            }
 
-            result.add(JsonEntity.fromDocument(type, document));
+            return Collections.unmodifiableList(result);
+
+        } catch (SQLException exception) {
+            throw new DocumentStoreException(exception.getMessage(), exception);
         }
+    }
 
-        return Collections.unmodifiableList(result);
+    @FunctionalInterface
+    interface DocumentQueryBuilder {
+        PreparedStatement createQuery() throws SQLException;
     }
 }

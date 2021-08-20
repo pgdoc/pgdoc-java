@@ -55,7 +55,7 @@ public class DocumentQueryTests {
     }
 
     @Test
-    void execute_success() throws Exception {
+    void execute_success() {
         JsonEntity<TestJsonEntity> correctEntity = JsonEntity.create(new TestJsonEntity("correct"));
         JsonEntity<WrongTypeJsonEntity> incorrectEntity = JsonEntity.create(new WrongTypeJsonEntity("incorrect"));
 
@@ -63,7 +63,7 @@ public class DocumentQueryTests {
 
         List<JsonEntity<TestJsonEntity>> result = DocumentQuery.execute(
             TestJsonEntity.class,
-            this.documentStore.getConnection().prepareStatement(
+            () -> this.documentStore.getConnection().prepareStatement(
                 "SELECT id, body, version FROM document WHERE get_document_type(id) = 5"));
 
         assertEquals(1, result.size());
@@ -73,7 +73,7 @@ public class DocumentQueryTests {
     }
 
     @Test
-    void execute_deletedDocument() throws Exception {
+    void execute_deletedDocument() {
         JsonEntity<TestJsonEntity> initialEntity = JsonEntity.create(new TestJsonEntity("correct"));
         JsonEntity<TestJsonEntity> deletedEntity = new JsonEntity(initialEntity.getId(), null, 1);
 
@@ -82,7 +82,7 @@ public class DocumentQueryTests {
 
         List<JsonEntity<TestJsonEntity>> result = DocumentQuery.execute(
             TestJsonEntity.class,
-            this.documentStore.getConnection().prepareStatement(
+            () -> this.documentStore.getConnection().prepareStatement(
                 "SELECT id, body, version FROM document WHERE get_document_type(id) = 5"));
 
         assertEquals(1, result.size());

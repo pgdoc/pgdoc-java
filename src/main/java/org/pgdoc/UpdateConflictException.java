@@ -23,7 +23,7 @@ import java.util.UUID;
 /**
  * Thrown when an attempt to modify a document is made using the wrong base version.
  */
-public class UpdateConflictException extends Exception {
+public class UpdateConflictException extends RuntimeException {
 
     /**
      * Gets the ID of the document that caused a conflict.

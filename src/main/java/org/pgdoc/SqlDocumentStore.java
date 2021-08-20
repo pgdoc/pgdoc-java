@@ -53,7 +53,7 @@ public class SqlDocumentStore implements DocumentStore {
 
     @Override
     public void updateDocuments(Iterable<Document> updatedDocuments, Iterable<Document> checkedDocuments)
-        throws DocumentStoreException, UpdateConflictException {
+        throws UpdateConflictException {
 
         List<DocumentUpdate> documentUpdates = new ArrayList();
 
@@ -100,9 +100,7 @@ public class SqlDocumentStore implements DocumentStore {
     }
 
     @Override
-    public List<Document> getDocuments(Iterable<UUID> ids)
-        throws DocumentStoreException {
-
+    public List<Document> getDocuments(Iterable<UUID> ids) {
         ArrayList<UUID> idList = new ArrayList<>();
         ids.forEach(idList::add);
 

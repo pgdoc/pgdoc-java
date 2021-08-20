@@ -95,7 +95,7 @@ public class SqlDocumentStoreTests {
 
     @ParameterizedTest
     @MethodSource("updateDocuments_oneArgument")
-    public void updateDocuments_emptyToValue(String to) throws Exception {
+    public void updateDocuments_emptyToValue(String to) {
         updateDocument(to, 0);
 
         Document document = store.getDocument(ids[0]);
@@ -105,7 +105,7 @@ public class SqlDocumentStoreTests {
 
     @ParameterizedTest
     @MethodSource("updateDocuments_twoArguments")
-    public void updateDocuments_valueToValue(String from, String to) throws Exception {
+    public void updateDocuments_valueToValue(String from, String to) {
         updateDocument(from, 0);
         updateDocument(to, 1);
 
@@ -115,7 +115,7 @@ public class SqlDocumentStoreTests {
     }
 
     @Test
-    public void updateDocuments_emptyToCheck() throws Exception {
+    public void updateDocuments_emptyToCheck() {
         checkDocument(0);
 
         Document document = store.getDocument(ids[0]);
@@ -125,7 +125,7 @@ public class SqlDocumentStoreTests {
 
     @ParameterizedTest
     @MethodSource("updateDocuments_oneArgument")
-    public void updateDocuments_valueToCheck(String from) throws Exception {
+    public void updateDocuments_valueToCheck(String from) {
         updateDocument(from, 0);
         checkDocument(1);
 
@@ -136,7 +136,7 @@ public class SqlDocumentStoreTests {
 
     @ParameterizedTest
     @MethodSource("updateDocuments_oneArgument")
-    public void updateDocuments_checkToValue(String to) throws Exception {
+    public void updateDocuments_checkToValue(String to) {
         checkDocument(0);
         updateDocument(to, 0);
 
@@ -146,7 +146,7 @@ public class SqlDocumentStoreTests {
     }
 
     @Test
-    public void updateDocuments_checkToCheck() throws Exception {
+    public void updateDocuments_checkToCheck() {
         checkDocument(0);
         checkDocument(0);
 
@@ -171,7 +171,7 @@ public class SqlDocumentStoreTests {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    public void updateDocuments_conflictDocumentDoesNotExist(boolean checkOnly) throws Exception {
+    public void updateDocuments_conflictDocumentDoesNotExist(boolean checkOnly) {
         UpdateConflictException exception = assertThrows(
             UpdateConflictException.class,
             checkOnly
@@ -187,7 +187,7 @@ public class SqlDocumentStoreTests {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    public void updateDocuments_conflictWrongVersion(boolean checkOnly) throws Exception {
+    public void updateDocuments_conflictWrongVersion(boolean checkOnly) {
         updateDocument("{\"abc\":\"def\"}", 0);
 
         UpdateConflictException exception = assertThrows(
@@ -205,7 +205,7 @@ public class SqlDocumentStoreTests {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    public void updateDocuments_conflictDocumentAlreadyExists(boolean checkOnly) throws Exception {
+    public void updateDocuments_conflictDocumentAlreadyExists(boolean checkOnly) {
         updateDocument("{\"abc\":\"def\"}", 0);
 
         UpdateConflictException exception = assertThrows(
@@ -222,7 +222,7 @@ public class SqlDocumentStoreTests {
     }
 
     @Test
-    public void updateDocuments_multipleDocumentsSuccess() throws Exception {
+    public void updateDocuments_multipleDocumentsSuccess() {
         updateDocument(ids[0], "{\"abc\":\"def\"}", 0);
         updateDocument(ids[1], "{\"ghi\":\"jkl\"}", 0);
 
@@ -250,7 +250,7 @@ public class SqlDocumentStoreTests {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    public void updateDocuments_multipleDocumentsConflict(boolean checkOnly) throws Exception {
+    public void updateDocuments_multipleDocumentsConflict(boolean checkOnly) {
         updateDocument(ids[0], "{\"abc\":\"def\"}", 0);
 
         UpdateConflictException exception = assertThrows(
@@ -283,7 +283,7 @@ public class SqlDocumentStoreTests {
     //region GetDocuments
 
     @Test
-    public void getDocuments_singleDocument() throws Exception {
+    public void getDocuments_singleDocument() {
         updateDocument("{\"abc\":\"def\"}", 0);
 
         List<Document> documents = store.getDocuments(List.of(ids[0]));
@@ -293,7 +293,7 @@ public class SqlDocumentStoreTests {
     }
 
     @Test
-    public void getDocuments_multipleDocuments() throws Exception {
+    public void getDocuments_multipleDocuments() {
         updateDocument(ids[0], "{\"abc\":\"def\"}", 0);
         updateDocument(ids[1], "{\"ghi\":\"jkl\"}", 0);
 
@@ -307,7 +307,7 @@ public class SqlDocumentStoreTests {
     }
 
     @Test
-    public void getDocuments_noDocument() throws Exception {
+    public void getDocuments_noDocument() {
         List<Document> documents = store.getDocuments(List.of());
 
         assertEquals(0, documents.size());
@@ -317,21 +317,15 @@ public class SqlDocumentStoreTests {
 
     //region Helper Methods
 
-    private void updateDocument(String body, long version)
-        throws DocumentStoreException, UpdateConflictException {
-
+    private void updateDocument(String body, long version) {
         updateDocument(ids[0], body, version);
     }
 
-    private void updateDocument(UUID id, String body, long version)
-        throws DocumentStoreException, UpdateConflictException {
-
+    private void updateDocument(UUID id, String body, long version) {
         store.updateDocuments(new Document(id, body, version));
     }
 
-    private void checkDocument(long version)
-        throws DocumentStoreException, UpdateConflictException {
-
+    private void checkDocument(long version) {
         store.updateDocuments(
             List.of(),
             List.of(new Document(ids[0], "{\"ignored\":\"ignored\"}", version)));

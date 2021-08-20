@@ -19,7 +19,7 @@ package org.pgdoc;
 /**
  * Thrown when a document store operation fails.
  */
-public class DocumentStoreException extends Exception {
+public class DocumentStoreException extends RuntimeException {
     public DocumentStoreException(String errorMessage, Throwable error) {
         super(errorMessage, error);
     }

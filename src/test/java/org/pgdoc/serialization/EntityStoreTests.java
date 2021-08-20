@@ -68,7 +68,7 @@ public class EntityStoreTests {
     }
 
     @Test
-    void updateEntities_create() throws Exception {
+    void updateEntities_create() {
         JsonEntity<StringJsonEntity> entity = new JsonEntity<>(
             id,
             new StringJsonEntity("initial"),
@@ -84,7 +84,7 @@ public class EntityStoreTests {
     }
 
     @Test
-    void updateEntities_update() throws Exception {
+    void updateEntities_update() {
         JsonEntity<StringJsonEntity> initialEntity = new JsonEntity<>(
             id,
             new StringJsonEntity("initial"),
@@ -105,7 +105,7 @@ public class EntityStoreTests {
     }
 
     @Test
-    void updateEntities_check() throws Exception {
+    void updateEntities_check() {
         JsonEntity<StringJsonEntity> initialEntity = new JsonEntity<>(
             id,
             new StringJsonEntity("initial"),
@@ -126,7 +126,7 @@ public class EntityStoreTests {
     }
 
     @Test
-    void updateEntities_multiple() throws Exception {
+    void updateEntities_multiple() {
         JsonEntity<StringJsonEntity> entity1 = JsonEntity.create(new StringJsonEntity("initial1"));
         JsonEntity<IntJsonEntity> entity2 = JsonEntity.create(new IntJsonEntity(1000));
 
@@ -144,7 +144,7 @@ public class EntityStoreTests {
     }
 
     @Test
-    void getEntity_noEntity() throws Exception {
+    void getEntity_noEntity() {
         JsonEntity<StringJsonEntity> result = this.store.getEntity(StringJsonEntity.class, id);
 
         assertEquals(id, result.getId());
