@@ -41,6 +41,9 @@ public class SqlDocumentStore implements DocumentStore {
     private static final String serializationFailureSqlState = "40001";
     private static final String deadlockDetectedSqlState = "40P01";
 
+    /**
+     * Gets the underlying database connection.
+     */
     @Getter
     private final Connection connection;
 

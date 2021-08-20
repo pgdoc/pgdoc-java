@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.pgdoc</groupId>
     <artifactId>pgdoc</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <packaging>jar</packaging>
     <name>PgDoc</name>
     <description>PgDoc is a library for using PostgreSQL as a JSON document store.</description>
@@ -88,8 +88,30 @@
     </distributionManagement>
 
     <build>
-        <!-- OSSRH publishing -->
+        <sourceDirectory>target/generated-sources/delombok</sourceDirectory>
+
         <plugins>
+            <!-- Delombok -->
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.20.0</version>
+                <executions>
+                    <execution>
+                        <id>delombok</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                        <configuration>
+                            <addOutputDirectory>false</addOutputDirectory>
+                            <sourceDirectory>src/main/java</sourceDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- OSSRH publishing -->
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>

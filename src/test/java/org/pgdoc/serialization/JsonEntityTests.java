@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,6 +53,7 @@ public class JsonEntityTests {
         testObject.setInstantValue(date.toInstant(ZoneOffset.UTC));
         testObject.setDecimalValue(new BigDecimal("123456789.0123456789"));
         testObject.setEntityIdValue(entityId);
+        testObject.setListValue(List.of("a", "b"));
 
         JsonEntity<TestJsonEntity> entity = new JsonEntity<>(new EntityId(guid), testObject, version);
 
@@ -67,7 +69,8 @@ public class JsonEntityTests {
                 "\"date_value\":\"2009-01-03T20:30:00\"," +
                 "\"instant_value\":\"2009-01-03T20:30:00Z\"," +
                 "\"decimal_value\":123456789.0123456789," +
-                "\"id_value\":\"353325a2-00ad-4dae-808a-2e895f86188d\"" +
+                "\"id_value\":\"353325a2-00ad-4dae-808a-2e895f86188d\"," +
+                "\"list_value\":[\"a\",\"b\"]" +
                 "}",
             document.getBody());
 
@@ -80,6 +83,7 @@ public class JsonEntityTests {
         assertEquals(date.toInstant(ZoneOffset.UTC), result.getEntity().getInstantValue());
         assertEquals("123456789.0123456789", result.getEntity().getDecimalValue().toPlainString());
         assertEquals(entityId, result.getEntity().getEntityIdValue());
+        assertEquals(List.of("a", "b"), result.getEntity().getListValue());
     }
 
     @Test
@@ -120,6 +124,7 @@ public class JsonEntityTests {
         assertEquals(null, result.getEntity().getInstantValue());
         assertEquals(null, result.getEntity().getDecimalValue());
         assertEquals(null, result.getEntity().getEntityIdValue());
+        assertEquals(null, result.getEntity().getListValue());
     }
 
     @ParameterizedTest
@@ -201,5 +206,10 @@ public class JsonEntityTests {
         @Setter
         @SerializedName(value = "id_value")
         private EntityId entityIdValue;
+
+        @Getter
+        @Setter
+        @SerializedName(value = "list_value")
+        private List<String> listValue;
     }
 }
